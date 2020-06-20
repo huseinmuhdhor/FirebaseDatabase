@@ -1,6 +1,7 @@
 package com.sample.firebasecrud.ui;
 
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -8,12 +9,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.sample.firebasecrud.R;
-import com.sample.firebasecrud.models.data_mahasiswa;
+import com.sample.firebasecrud.models.DataMahasiswa;
 
 public class updateData extends AppCompatActivity {
 
@@ -21,7 +23,6 @@ public class updateData extends AppCompatActivity {
     private EditText nimBaru, namaBaru, jurusanBaru;
     private Button update;
     private DatabaseReference database;
-    private FirebaseAuth auth;
     private String cekNIM, cekNama, cekJurusan;
 
     @Override
@@ -34,8 +35,6 @@ public class updateData extends AppCompatActivity {
         jurusanBaru = findViewById(R.id.new_jurusan);
         update = findViewById(R.id.update);
 
-        //Mendapatkan Instance autentikasi dan Referensi dari Database
-        auth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance().getReference();
         getData();
         update.setOnClickListener(new View.OnClickListener() {
@@ -52,7 +51,7 @@ public class updateData extends AppCompatActivity {
                     Toast.makeText(updateData.this, "Data tidak boleh ada yang kosong", Toast.LENGTH_SHORT).show();
                 }else {
                     //Menjalankan proses update data
-                    data_mahasiswa setMahasiswa = new data_mahasiswa();
+                    DataMahasiswa setMahasiswa = new DataMahasiswa();
                     setMahasiswa.setNim(nimBaru.getText().toString());
                     setMahasiswa.setNama(namaBaru.getText().toString());
                     setMahasiswa.setJurusan(jurusanBaru.getText().toString());
@@ -78,11 +77,9 @@ public class updateData extends AppCompatActivity {
     }
 
     //Proses Update data yang sudah ditentukan
-    private void updateMahasiswa(data_mahasiswa mahasiswa){
-        String userID = auth.getUid();
+    private void updateMahasiswa(DataMahasiswa mahasiswa){
         String getKey = getIntent().getExtras().getString("getPrimaryKey");
         database.child("Admin")
-                .child(userID)
                 .child("Mahasiswa")
                 .child(getKey)
                 .setValue(mahasiswa)

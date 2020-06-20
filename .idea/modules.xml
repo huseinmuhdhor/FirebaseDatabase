@@ -4,6 +4,8 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/FirebaseCRUD.iml" filepath="$PROJECT_DIR$/FirebaseCRUD.iml" group="FirebaseCRUD" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="FirebaseCRUD/app" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/crud-firebase.iml" filepath="$PROJECT_DIR$/.idea/modules/crud-firebase.iml" group="crud-firebase" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/crud-firebase-app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/crud-firebase-app.iml" group="crud-firebase/app" />
     </modules>
   </component>
 </project>

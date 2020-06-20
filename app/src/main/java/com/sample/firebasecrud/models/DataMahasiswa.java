@@ -1,6 +1,6 @@
 package com.sample.firebasecrud.models;
 
-public class data_mahasiswa {
+public class DataMahasiswa {
 
     //Deklarasi Variable
     private String nim;
@@ -41,11 +41,11 @@ public class data_mahasiswa {
     }
 
     //Membuat Konstuktor kosong untuk membaca data snapshot
-    public data_mahasiswa(){
+    public DataMahasiswa(){
     }
 
     //Konstruktor dengan beberapa parameter, untuk mendapatkan Input Data dari User
-    public data_mahasiswa(String nim, String nama, String jurusan) {
+    public DataMahasiswa(String nim, String nama, String jurusan) {
         this.nim = nim;
         this.nama = nama;
         this.jurusan = jurusan;

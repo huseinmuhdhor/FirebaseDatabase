@@ -1,16 +1,15 @@
 package com.sample.firebasecrud.ui;
 
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -18,7 +17,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.sample.firebasecrud.R;
 import com.sample.firebasecrud.adapter.RecyclerViewAdapter;
-import com.sample.firebasecrud.models.data_mahasiswa;
+import com.sample.firebasecrud.models.DataMahasiswa;
 
 import java.util.ArrayList;
 
@@ -31,9 +30,7 @@ public class MyListData extends AppCompatActivity implements RecyclerViewAdapter
 
     //Deklarasi Variable Database Reference dan ArrayList dengan Parameter Class Model kita.
     private DatabaseReference reference;
-    private ArrayList<data_mahasiswa> dataMahasiswa;
-
-    private FirebaseAuth auth;
+    private ArrayList<DataMahasiswa> dataMahasiswa;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +38,6 @@ public class MyListData extends AppCompatActivity implements RecyclerViewAdapter
         setContentView(R .layout.activity_my_list_data);
         recyclerView = findViewById(R.id.datalist);
         getSupportActionBar().setTitle("Data Mahasiswa");
-        auth = FirebaseAuth.getInstance();
         MyRecyclerView();
         GetData();
     }
@@ -50,7 +46,7 @@ public class MyListData extends AppCompatActivity implements RecyclerViewAdapter
     private void GetData(){
         //Mendapatkan Referensi Database
         reference = FirebaseDatabase.getInstance().getReference();
-        reference.child("Admin").child(auth.getUid()).child("Mahasiswa")
+        reference.child("Admin").child("Mahasiswa")
                  .addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -59,7 +55,7 @@ public class MyListData extends AppCompatActivity implements RecyclerViewAdapter
 
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()){
                     //Mapping data pada DataSnapshot ke dalam objek mahasiswa
-                    data_mahasiswa mahasiswa = snapshot.getValue(data_mahasiswa.class);
+                    DataMahasiswa mahasiswa = snapshot.getValue(DataMahasiswa.class);
 
                     //Mengambil Primary Key, digunakan untuk proses Update dan Delete
                     mahasiswa.setKey(snapshot.getKey());
@@ -100,17 +96,15 @@ public class MyListData extends AppCompatActivity implements RecyclerViewAdapter
     }
 
     @Override
-    public void onDeleteData(data_mahasiswa data, int position) {
+    public void onDeleteData(DataMahasiswa data, int position) {
         /*
          * Kode ini akan dipanggil ketika method onDeleteData
          * dipanggil dari adapter pada RecyclerView melalui interface.
          * kemudian akan menghapus data berdasarkan primary key dari data tersebut
          * Jika berhasil, maka akan memunculkan Toast
          */
-        String userID = auth.getUid();
         if(reference != null){
             reference.child("Admin")
-                    .child(userID)
                     .child("Mahasiswa")
                     .child(data.getKey())
                     .removeValue()

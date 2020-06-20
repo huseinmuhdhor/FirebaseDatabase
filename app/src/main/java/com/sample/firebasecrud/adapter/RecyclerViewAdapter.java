@@ -5,8 +5,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.RecyclerView;
+import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.sample.firebasecrud.R;
-import com.sample.firebasecrud.models.data_mahasiswa;
+import com.sample.firebasecrud.models.DataMahasiswa;
 import com.sample.firebasecrud.ui.MyListData;
 import com.sample.firebasecrud.ui.updateData;
 
@@ -25,19 +25,19 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
 
     //Deklarasi Variable
-    private ArrayList<data_mahasiswa> listMahasiswa;
+    private ArrayList<DataMahasiswa> listMahasiswa;
     private Context context;
 
     //Membuat Interfece
     public interface dataListener{
-        void onDeleteData(data_mahasiswa data, int position);
+        void onDeleteData(DataMahasiswa data, int position);
     }
 
     //Deklarasi objek dari Interfece
     dataListener listener;
 
     //Membuat Konstruktor, untuk menerima input dari Database
-    public RecyclerViewAdapter(ArrayList<data_mahasiswa> listMahasiswa, Context context) {
+    public RecyclerViewAdapter(ArrayList<DataMahasiswa> listMahasiswa, Context context) {
         this.listMahasiswa = listMahasiswa;
         this.context = context;
         listener = (MyListData)context;
