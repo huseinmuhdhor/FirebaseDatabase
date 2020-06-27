@@ -4,19 +4,33 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.sample.firebasecrud.R;
 import com.sample.firebasecrud.models.DataMahasiswa;
 import com.sample.firebasecrud.ui.MyListData;
-import com.sample.firebasecrud.ui.updateData;
+import com.sample.firebasecrud.ui.UpdateData;
 
 import java.util.ArrayList;
 
@@ -48,6 +62,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         private TextView NIM, Nama, Jurusan;
         private LinearLayout ListItem;
+        private ImageView image;
+        private StorageReference storageReference;
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -56,6 +72,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             Nama = itemView.findViewById(R.id.nama);
             Jurusan = itemView.findViewById(R.id.jurusan);
             ListItem = itemView.findViewById(R.id.list_item);
+            image = itemView.findViewById(R.id.iv_image);
         }
     }
 
@@ -68,16 +85,35 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     @SuppressLint("SetTextI18n")
     @Override
-    public void onBindViewHolder(ViewHolder holder, final int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
         //Mengambil Nilai/Value yenag terdapat pada RecyclerView berdasarkan Posisi Tertentu
         final String NIM = listMahasiswa.get(position).getNim();
         final String Nama = listMahasiswa.get(position).getNama();
         final String Jurusan = listMahasiswa.get(position).getJurusan();
+        final String imageUrl = listMahasiswa.get(position).getImage();
 
         //Memasukan Nilai/Value kedalam View (TextView: NIM, Nama, Jurusan)
         holder.NIM.setText("NIM: "+NIM);
         holder.Nama.setText("Nama: "+Nama);
         holder.Jurusan.setText("Jurusan: "+Jurusan);
+
+        holder.storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl);
+
+        //Mengambil image url dari firebase storage setelah mendapatkan referensi imagenya
+        holder.storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                //Menampilkan image setelah sukses mendapatkan image urlnya
+                Glide.with(context)
+                        .load(uri)
+                        .into(holder.image);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(context, "Error " + e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
 
         //Menampilkan Menu Update dan Delete saat user melakukan long klik pada salah satu item
         holder.ListItem.setOnLongClickListener(new View.OnLongClickListener() {
@@ -91,16 +127,17 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                         switch (i){
                             case 0:
                                 /*
-                                  Berpindah Activity pada halaman layout updateData
+                                  Berpindah Activity pada halaman layout UpdateData
                                   dan mengambil data pada listMahasiswa, berdasarkan posisinya
-                                  untuk dikirim pada activity updateData
+                                  untuk dikirim pada activity UpdateData
                                  */
                                 Bundle bundle = new Bundle();
                                 bundle.putString("dataNIM", listMahasiswa.get(position).getNim());
                                 bundle.putString("dataNama", listMahasiswa.get(position).getNama());
                                 bundle.putString("dataJurusan", listMahasiswa.get(position).getJurusan());
+                                bundle.putString("dataImage", listMahasiswa.get(position).getImage());
                                 bundle.putString("getPrimaryKey", listMahasiswa.get(position).getKey());
-                                Intent intent = new Intent(view.getContext(), updateData.class);
+                                Intent intent = new Intent(view.getContext(), UpdateData.class);
                                 intent.putExtras(bundle);
                                 context.startActivity(intent);
                                 break;
